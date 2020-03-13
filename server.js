@@ -2,12 +2,41 @@ const express = require('express');
 const cors = require('cors');
 const stripe = require('stripe')('sk_test_M1L2yD2XVfjqVABGX2QlLpQD00rypjxoDi');
 const app = express();
+const fetch = require('node-fetch');
 
 app.use(express.json());
 
 app.use(cors({
   credentials: true,
 }));
+
+app.post('/checkCaptcha', (request, response) => {
+  try {
+    const {token} = request.body;
+    const requestData = {
+      secret: '6Le6AtUUAAAAAHy3OuaL6CfGwveXKRkyulcEZ8R6',
+      response: token,
+    };
+
+    fetch('https://www.google.com/recaptcha/api/siteverify', {
+      method: 'post',
+      headers: {
+        'Content-Type': 'application/json; charset=utf-8',
+      },
+      body: JSON.stringify(requestData),
+    })
+      .then(res => res.json())
+      .then(res => {
+        console.log(res, '++++++++++++');
+        response.send({data: res});
+      })
+      .catch(er => {
+        console.log(er);
+      });
+  } catch (e) {
+    return response.send({error: e.message});
+  }
+});
 
 app.post('/pay', (request, response) => {
   try {
@@ -35,7 +64,7 @@ app.post('/pay', (request, response) => {
         response.send(generateResponse(res));
       })
       .catch(er => {
-        response.send({error: er});
+          response.send({error: er});
         }
       )
   } catch (e) {
