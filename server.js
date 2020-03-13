@@ -13,22 +13,15 @@ app.use(cors({
 app.post('/checkCaptcha', (request, response) => {
   try {
     const {token} = request.body;
-    const requestData = {
-      secret: '6Le6AtUUAAAAAHy3OuaL6CfGwveXKRkyulcEZ8R6',
-      response: token,
-    };
+    const SECRET = '6Le6AtUUAAAAAHy3OuaL6CfGwveXKRkyulcEZ8R6';
+    // const SECRET3 = '6LcAAOEUAAAAACTgPMGqu0HppFbeoiRUmt4fI5GU';
 
-    fetch('https://www.google.com/recaptcha/api/siteverify', {
-      method: 'post',
-      headers: {
-        'Content-Type': 'application/json; charset=utf-8',
-      },
-      body: JSON.stringify(requestData),
+    fetch(`https://www.google.com/recaptcha/api/siteverify?secret=${SECRET}&response=${token}`, {
+      method: 'POST',
     })
       .then(res => res.json())
       .then(res => {
-        console.log(res, '++++++++++++');
-        response.send({data: res});
+        response.send(res);
       })
       .catch(er => {
         console.log(er);
