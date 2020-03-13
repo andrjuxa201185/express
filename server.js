@@ -12,8 +12,9 @@ app.use(cors({
 app.post('/pay', (request, response) => {
   try {
     let intent = 'intend';
+    const {payment_method_id, payment_intent_id} = request.body;
 
-    if (request.body.payment_method_id) {
+    if (payment_method_id) {
       intent = stripe.paymentIntents.create({
         payment_method: request.body.payment_method_id,
         amount: 1099,
@@ -22,7 +23,8 @@ app.post('/pay', (request, response) => {
         confirm: true
       });
     }
-    if (request.body.payment_intent_id) {
+
+    if (payment_intent_id) {
       intent = stripe.paymentIntents.confirm(
         request.body.payment_intent_id
       );
@@ -32,6 +34,10 @@ app.post('/pay', (request, response) => {
       .then(res => {
         response.send(generateResponse(res));
       })
+      .catch(er => {
+        response.send({error: er});
+        }
+      )
   } catch (e) {
     return response.send({error: e.message});
   }
