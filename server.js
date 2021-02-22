@@ -14,13 +14,13 @@ app.post('/checkCaptcha', (request, response) => {
   try {
     const {token} = request.body;
     const SECRET = '6Le6AtUUAAAAAHy3OuaL6CfGwveXKRkyulcEZ8R6';
-    // const SECRET3 = '6LcAAOEUAAAAACTgPMGqu0HppFbeoiRUmt4fI5GU';
 
     fetch(`https://www.google.com/recaptcha/api/siteverify?secret=${SECRET}&response=${token}`, {
       method: 'POST',
     })
       .then(res => res.json())
       .then(res => {
+        console.log(res);
         response.send(res);
       })
       .catch(er => {
